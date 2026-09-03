@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MKSB @ MIHAS Digital Catalog</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===================================================
+       THEME VARIABLES - DARK NAVY & OREN AESTHETIC
+       =================================================== */
+    :root {
+      --navy-bg: #090D16;        /* Latar Belakang Utama Dark Navy */
+      --navy-card: #151D2A;      /* Kad Produk Navy Gelap */
+      --navy-card-hover: #1E293B;/* Kesan Hover Kad */
+      --header-bg: #0F172A;      /* Header Dark Navy */
+      --orange-main: #F97316;    /* Oren Cerah Premium */
+      --orange-light: #FF8C00;
+      --orange-box-bg: rgba(249, 115, 22, 0.12);
+      --orange-border: rgba(249, 115, 22, 0.35);
+      
+      --text-main: #F8FAFC;      /* Teks Utama Putih Terang */
+      --text-muted: #94A3B8;     /* Teks Spesifikasi Kelabu Soft */
+      --border-color: #243044;   /* Garisan Sempadan Dark */
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.25);
+      --shadow-lg: 0 16px 32px -8px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--navy-bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Outer Wrapper */
+    .app-viewport {
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background-color: var(--navy-bg);
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.6);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ===================================================
+       1. SPLASH SCREEN
+       =================================================== */
+    #splash-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at center, #1E293B 0%, #090D16 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+      padding: 2rem;
+    }
+
+    #splash-screen.fade-out {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .splash-logo-img {
+      max-width: 260px;
+      width: 70vw;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 12px 24px rgba(0,0,0,0.5));
+      animation: floatLogo 3s ease-in-out infinite;
+    }
+
+    @keyframes floatLogo {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.03); }
+    }
+
+    /* ===================================================
+       2. FIXED TOP CONTAINER (HEADER + NAV + MARQUEE)
+       =================================================== */
+    .sticky-header-container {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background-color: var(--header-bg);
+      box-shadow: var(--shadow-sm);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .app-header {
+      padding: 12px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 70px;
+      background-color: var(--header-bg);
+    }
+
+    .header-left-logos {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo-salim {
+      height: 44px;
+      width: auto;
+      object-fit: contain;
+      transition: transform 0.2s ease;
+    }
+
+    .logo-mksb {
+      height: 48px;
+      width: auto;
+      object-fit: contain;
+      transition: transform 0.2s ease;
+    }
+
+    .logo-mihas {
+      height: 52px;
+      width: auto;
+      object-fit: contain;
+      transition: transform 0.2s ease;
+      filter: brightness(1.1);
+    }
+
+    .logo-salim:hover, .logo-mksb:hover, .logo-mihas:hover {
+      transform: scale(1.04);
+    }
+
+    /* Category Navigation */
+    .category-nav-container {
+      background: linear-gradient(90deg, var(--orange-main) 0%, #EA580C 100%);
+      padding: 10px 16px;
+      overflow-x: auto;
+      white-space: nowrap;
+      display: flex;
+      gap: 8px;
+      scrollbar-width: none;
+    }
+
+    .category-nav-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .cat-tab {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 18px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: rgba(255, 255, 255, 0.95);
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 30px;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      user-select: none;
+    }
+
+    .cat-tab:hover {
+      background: rgba(15, 23, 42, 0.4);
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+
+    .cat-tab.active {
+      background: #090D16;
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Event Marquee Announcement Banner */
+    .event-marquee {
+      width: 100%;
+      background: linear-gradient(90deg, #7F1D1D 0%, #B91C1C 50%, #7F1D1D 100%);
+      color: #FFFFFF;
+      padding: 8px 0;
+      overflow: hidden;
+      white-space: nowrap;
+      box-sizing: border-box;
+      font-size: 0.82rem;
+      font-weight: 500;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .marquee-content {
+      display: inline-block;
+      padding-left: 100%;
+      animation: marquee 20s linear infinite;
+    }
+
+    .event-marquee:hover .marquee-content {
+      animation-play-state: paused;
+    }
+
+    @keyframes marquee {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-100%, 0); }
+    }
+
+    .marquee-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      margin-right: 6px;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+
+    /* ===================================================
+       3. RESPONSIVE PRODUCT CATALOG GRID (DARK NAVY)
+       =================================================== */
+    .catalog-section {
+      padding: 20px 16px 40px 16px;
+      flex: 1;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    /* Breakpoints Responsif */
+    @media (min-width: 640px) {
+      .product-grid { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+      .catalog-section { padding: 24px; }
+    }
+    @media (min-width: 900px) {
+      .product-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    }
+    @media (min-width: 1150px) {
+      .product-grid { grid-template-columns: repeat(5, 1fr); gap: 22px; }
+    }
+
+    /* Product Card */
+    .product-card {
+      background: var(--navy-card);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+      position: relative;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      background: var(--navy-card-hover);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--orange-main);
+    }
+
+    /* Container Gambar */
+    .img-container {
+      width: 100%;
+      height: 140px;
+      overflow: hidden;
+      background-color: #FFFFFF;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+    }
+
+    .product-img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+
+    .product-card:hover .product-img {
+      transform: scale(1.08);
+    }
+
+    .img-placeholder-fallback {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .img-placeholder-fallback svg {
+      width: 32px;
+      height: 32px;
+      opacity: 0.4;
+    }
+
+    .product-details {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .product-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.35;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      min-height: 2.4em;
+    }
+
+    .product-spec {
+      font-size: 0.73rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 8px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-top: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Price Box (Theme Oren Gelap) */
+    .price-box {
+      background: var(--orange-box-bg);
+      border: 1px solid var(--orange-border);
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+    }
+
+    .price-label {
+      font-weight: 700;
+      letter-spacing: 0.4px;
+    }
+
+    .price-value {
+      font-weight: 800;
+      font-size: 0.88rem;
+    }
+
+    .price-row.paket {
+      color: var(--orange-light);
+      padding-bottom: 3px;
+      border-bottom: 1px dashed var(--orange-border);
+    }
+
+    .price-row.kotak {
+      color: #FFFFFF;
+      padding-top: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-viewport">
+    
+    <!-- 1. SPLASH SCREEN -->
+    <div id="splash-screen">
+      <img src="SALIM.png" alt="Salim Logo" class="splash-logo-img">
+    </div>
+
+    <!-- 2. FIXED TOP HEADER & NAVIGATION -->
+    <div class="sticky-header-container">
+      <header class="app-header">
+        <div class="header-left-logos">
+          <img src="SALIM.png" alt="Salim Logo" class="logo-salim">
+          <img src="mksb.png" alt="MKSB Logo" class="logo-mksb">
+        </div>
+        <div class="header-right-logo">
+          <img src="mihas.jpg" alt="MIHAS Logo" class="logo-mihas">
+        </div>
+      </header>
+
+      <!-- Category Navigation Tabs -->
+      <nav class="category-nav-container" id="category-tabs"></nav>
+
+      <!-- Event Marquee Announcement Banner -->
+      <div class="event-marquee">
+        <div class="marquee-content">
+          <span class="marquee-badge">TAWARAN KHAS</span> Harga yang dipaparkan ini hanya sah semasa acara berlangsung pada <strong>23 – 26 September 2026</strong> sahaja!
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. MAIN PRODUCT CATALOG SECTION -->
+    <main class="catalog-section">
+      <div class="product-grid" id="product-grid"></div>
+    </main>
+
+  </div>
+
+  <script>
+    // Automatic Splash Screen Fade Out
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        splash.classList.add('fade-out');
+      }, 2000);
+    });
+
+    const catalogData = {
+      "Burgers": [
+        { name: "Salim Chicken Burger 350g", spec: "70g x 5 pcs x 36 pkt", pkt: "4.40", box: "158.40", img: "chicken-burger-350.png" },
+        { name: "Salim Chicken Burger 300g", spec: "60g x 5 pcs x 36 pkt", pkt: "4.00", box: "144.00", img: "chicken-burger-350.png" },
+        { name: "Salim Meat Burger 350g", spec: "70g x 5 pcs x 36 pkt", pkt: "4.90", box: "176.40", img: "meat-burger-350.png" },
+        { name: "Salim Meat Burger 300g", spec: "60g x 5 pcs x 36 pkt", pkt: "4.30", box: "154.80", img: "meat-burger-350.png" },
+        { name: "Salim Grilled Chicken Burger 750g", spec: "150g x 5 pcs x 24 pkt", pkt: "13.65", box: "327.60", img: "grilled-chicken-750.jpg" },
+        { name: "Salim Grilled Meat Burger 750g", spec: "150g x 5 pcs x 24 pkt", pkt: "15.75", box: "378.00", img: "grilled-meat-750.png" },
+        { name: "Salim Grilled Lamb Burger 750g", spec: "150g x 5 pcs x 24 pkt", pkt: "29.00", box: "696.00", img: "grilled-lamb-750.jpg" },
+        { name: "Salim Chicken Square Burger 400g", spec: "80g x 5 pcs x 36 pkt", pkt: "5.50", box: "198.00", img: "chicken-square-400.jpg" },
+        { name: "Salim Meat Square Burger 400g", spec: "80g x 5 pcs x 36 pkt", pkt: "5.60", box: "201.60", img: "meat-square-400.jpg" },
+        { name: "Salim Chicken Oblong 500g", spec: "100g x 5 pcs x 24 pkt", pkt: "9.00", box: "216.00", img: "chicken-oblong-500.jpg" },
+        { name: "Salim Meat Oblong 500g", spec: "100g x 5 pcs x 24 pkt", pkt: "10.00", box: "240.00", img: "meat-oblong-500.jpg" },
+        { name: "Salim Lamb Oblong 500g", spec: "100g x 5 pcs x 24 pkt", pkt: "15.50", box: "372.00", img: "lamb-oblong-500.jpg" }
+      ],
+      "Meatballs": [
+        { name: "Salim Meatball Original 1kg", spec: "1000g x 12 pkt", pkt: "14.00", box: "168.00", img: "meatball-original-1000.png" },
+        { name: "Salim Meatball Blackpepper 1kg", spec: "1000g x 12 pkt", pkt: "14.20", box: "170.40", img: "meatball-blackpepper-1000.png" },
+        { name: "Salim Meatball Original 500g", spec: "500g x 24 pkt", pkt: "7.60", box: "182.40", img: "meatball-original-500.png" },
+        { name: "Salim Meatball Blackpepper 500g", spec: "500g x 24 pkt", pkt: "7.85", box: "188.40", img: "meatball-blackpepper-500.png" },
+        { name: "Salim Chicken Ball Original 1kg", spec: "1000g x 12 pkt", pkt: "11.95", box: "143.40", img: "chicken-ball-original-1000.png" },
+        { name: "Salim Chicken Ball Blackpepper 1kg", spec: "1000g x 12 pkt", pkt: "12.15", box: "145.80", img: "chicken-ball-blackpepper-1000.png" },
+        { name: "Salim Chicken Ball Original 500g", spec: "500g x 24 pkt", pkt: "6.15", box: "147.60", img: "chicken-ball-original-500.png" },
+        { name: "Salim Chicken Ball Blackpepper 500g", spec: "500g x 24 pkt", pkt: "6.45", box: "154.80", img: "chicken-ball-blackpepper-500.png" }
+      ],
+      "Sausages": [
+        { name: "Salim Jumbo Sausage Cheese 800g", spec: "100g x 8 pcs x 16 pkt", pkt: "15.50", box: "248.00", img: "jumbo-sausage-cheese-800.png" },
+        { name: "Salim Jumbo Sausage Blackpepper 800g", spec: "100g x 8 pcs x 16 pkt", pkt: "14.50", box: "232.00", img: "jumbo-sausage-blackpepper-800.png" },
+        { name: "Salim Jumbo Sausage Original 800g", spec: "100g x 8 pcs x 16 pkt", pkt: "12.20", box: "195.20", img: "jumbo-sausage-original-800.jpg" },
+        { name: "Salim Jumbo Sausage Pulut 800g", spec: "100g x 8 pcs x 16 pkt", pkt: "13.30", box: "212.80", img: "jumbo-sausage-pulut-800.png" },
+        { name: "Salim Chicken Cocktail 450g", spec: "450g x 24 pkt", pkt: "7.30", box: "175.20", img: "chicken-cocktail-450.jpg" },
+        { name: "Salim Chicken Cocktail 800g", spec: "800g x 16 pkt", pkt: "12.25", box: "196.00", img: "chicken-cocktail-800.jpg" },
+        { name: "Salim Smoked Meat Frankfurter 340g", spec: "340g x 24 pkt", pkt: "5.70", box: "136.80", img: "smoked-meat-frankfurter-340.png" },
+        { name: "Salim Smoked Chicken Frankfurter 340g", spec: "340g x 24 pkt", pkt: "5.40", box: "129.60", img: "smoked-chicken-frankfurter-340.png" },
+        { name: "Salim Frankfurter Pulut 340g", spec: "340g x 24 pkt", pkt: "5.30", box: "127.20", img: "frankfurter-pulut-340.jpg" },
+        { name: "Salim VP Chicken Frankfurter 300g", spec: "300g x 36 pkt", pkt: "2.60", box: "93.60", img: "vp-chicken-frankfurter-300.jpg" },
+        { name: "Salim VP Chicken Frankfurter 900g", spec: "900g x 12 pkt", pkt: "7.80", box: "93.60", img: "vp-chicken-frankfurter-900.jpg" }
+      ],
+      "Minced Meat": [
+        { name: "Salim Minced Chicken 1kg", spec: "1000g x 12 pkt", pkt: "14.85", box: "178.20", img: "minced-chicken-1000.jpg" },
+        { name: "Salim Minced Chicken 400g", spec: "400g x 24 pkt", pkt: "6.45", box: "154.80", img: "minced-chicken-1000.jpg" },
+        { name: "Salim Minced Meat 1kg", spec: "1000g x 12 pkt", pkt: "16.90", box: "202.80", img: "minced-meat-1000.jpg" },
+        { name: "Salim Minced Meat 400g", spec: "400g x 24 pkt", pkt: "8.20", box: "196.80", img: "minced-meat-1000.jpg" }
+      ],
+      "Kebab": [
+        { name: "Kebab Ayam 1kg", spec: "1kg x 20 pkt", pkt: "19.50", box: "390.00", img: "kebab-ayam-1kg.jpg" },
+        { name: "Kebab Ayam Tiang 3kg", spec: "3kg x 6 tiang", pkt: "58.50", box: "351.00", img: "kebab-ayam-tiang-3kg.jpg" },
+        { name: "Kebab Ayam Tiang 5kg", spec: "5kg x 4 tiang", pkt: "97.50", box: "390.00", img: "kebab-ayam-tiang-5kg.jpg" },
+        { name: "Kebab Ayam Tiang 8kg", spec: "8kg x 1 tiang", pkt: "156.00", box: "156.00", img: "kebab-ayam-tiang-8kg.jpg" },
+        { name: "Kebab Ayam Tiang 10kg", spec: "10kg x 1 tiang", pkt: "195.00", box: "195.00", img: "kebab-ayam-tiang-10kg.jpg" },
+        { name: "Kebab Daging 1kg", spec: "1kg x 20 pkt", pkt: "18.20", box: "364.00", img: "kebab-daging-1kg.jpg" },
+        { name: "Kebab Daging Tiang 3kg", spec: "3kg x 6 tiang", pkt: "54.60", box: "327.60", img: "kebab-daging-tiang-3kg.jpg" },
+        { name: "Kebab Daging Tiang 5kg", spec: "5kg x 4 tiang", pkt: "91.00", box: "364.00", img: "kebab-daging-tiang-5kg.jpg" },
+        { name: "Kebab Kambing 1kg", spec: "1kg x 20 pkt", pkt: "28.70", box: "574.00", img: "kebab-kambing-1kg.jpg" },
+        { name: "Kebab Kambing Tiang 3kg", spec: "3kg x 6 tiang", pkt: "86.10", box: "516.60", img: "kebab-kambing-tiang-3kg.jpg" },
+        { name: "Kebab Kambing Tiang 5kg", spec: "5kg x 4 tiang", pkt: "143.50", box: "574.00", img: "kebab-kambing-tiang-5kg.jpg" }
+      ],
+      "Fried Chicken": [
+        { name: "Salim Crispy Wings Fried Chicken 800g", spec: "800g x 12 pkt", pkt: "15.65", box: "187.80", img: "crispy-wings-fried-chicken.png" },
+        { name: "Salim Crispy Drummet Fried Chicken 800g", spec: "800g x 12 pkt", pkt: "15.65", box: "187.80", img: "crispy-drummet-fried-chicken.png" },
+        { name: "Salim Crispy Chiki 800g", spec: "1kg x 12 pkt", pkt: "18.90", box: "226.80", img: "crispy-chiki-800g.jpg" },
+        { name: "Salim Crispy Chiki Spicy 800g", spec: "1kg x 12 pkt", pkt: "19.10", box: "229.20", img: "crispy-chiki-spicy-800g.jpg" },
+        { name: "Salim Popcorn Fried Chicken 800g", spec: "800g x 12 pkt", pkt: "15.80", box: "189.60", img: "popcorn-fried-chicken-800g.jpg" }
+      ],
+      "Nugget": [
+        { name: "Salim Tempura Chicken Nuggets 1kg", spec: "1000g x 12 pkt", pkt: "11.70", box: "140.40", img: "salim-tempura-chicken-nuggets-1000.png" },
+        { name: "Salim Tempura Chicken Nuggets Hot & Spicy 800g", spec: "800g x 12 pkt", pkt: "14.70", box: "176.40", img: "salim-tempura-chicken-nuggets-hot-spicy-800.jpg" },
+        { name: "Salim Tempura Chicken Nuggets Crispy 800g", spec: "800g x 12 pkt", pkt: "12.90", box: "154.80", img: "salim-tempura-chicken-nuggets-crispy-800.jpg" },
+        { name: "Salim Tempura Chicken Nuggets Cheese 700g", spec: "700g x 12 pkt", pkt: "16.80", box: "201.60", img: "salim-tempura-chicken-nuggets-cheese-700.png" }
+      ],
+      "French Fries": [
+        { name: "Salim French Fries Shoestring 1kg", spec: "1kg x 12 pkt", pkt: "6.80", box: "81.60", img: "french-fries-shoestring.jpg" },
+        { name: "Salim French Fries Straight Cut 1kg", spec: "1kg x 12 pkt", pkt: "6.80", box: "81.60", img: "french-fries-straight-cut.jpg" },
+        { name: "Salim French Fries Crinkle Cut 1kg", spec: "1kg x 12 pkt", pkt: "6.80", box: "81.60", img: "french-fries-crinkle-cut.jpg" }
+      ],
+      "Siew Mai": [
+        { name: "Salim Siew Mai Original", spec: "25g x 15 pcs x 24 pkt", pkt: "9.60", box: "230.40", img: "siew-mai-original.png" },
+        { name: "Salim Siew Mai Blackpepper", spec: "25g x 15 pcs x 24 pkt", pkt: "9.60", box: "230.40", img: "siew-mai-blackpepper.png" },
+        { name: "Salim Siew Mai Crab", spec: "25g x 15 pcs x 24 pkt", pkt: "10.00", box: "240.00", img: "siew-mai-crab.png" }
+      ],
+      "Bread & Others": [
+        { name: "Salim Tortilla Wrap", spec: "60g x 10 pcs x 12 pkt", pkt: "9.00", box: "108.00", img: "salim-tortilla-wrap.jpg" },
+        { name: "Roti Pita", spec: "60g x 5 pcs x 24 pkt", pkt: "3.40", box: "81.60", img: "roti-pita.jpg" },
+        { name: "Roti Arab", spec: "200g x 5 pcs x 6 pkt", pkt: "5.60", box: "33.60", img: "roti-arab.jpg" },
+        { name: "Roti Tortila (Mission)", spec: "65g x 10 pcs x 12 pkt", pkt: "12.00", box: "144.00", img: "roti-tortila-mission.jpg" },
+        { name: "Wrapping Melawati Kebab", spec: "100 pcs x 20 pkt", pkt: "4.70", box: "94.00", img: "wrapping-melawati-kebab.jpg" },
+        { name: "Salim Donut Gula", spec: "30g x 8 pcs x 24 pkt", pkt: "6.50", box: "156.00", img: "salim-donut-gula.jpg" },
+        { name: "Salim Donut Strawberi", spec: "30g x 8 pcs x 24 pkt", pkt: "7.30", box: "175.20", img: "salim-donut-strawberi.jpg" },
+        { name: "Salim Donut Coklat", spec: "30g x 8 pcs x 24 pkt", pkt: "7.30", box: "175.20", img: "salim-donut-coklat.jpg" },
+        { name: "Salim Donut Pandan", spec: "30g x 8 pcs x 24 pkt", pkt: "7.30", box: "175.20", img: "salim-donut-pandan.jpg" },
+        { name: "Salim Donut Red Velvet", spec: "30g x 8 pcs x 24 pkt", pkt: "7.30", box: "175.20", img: "salim-donut-red-velvet.jpg" },
+        { name: "Salim Roti Naan", spec: "80g x 5 pcs x 24 pkt", pkt: "-", box: "-", img: "salim-roti-naan.jpg" },
+        { name: "Salim Roti Naan Cheese", spec: "80g x 4 pcs x 24 pkt", pkt: "-", box: "-", img: "salim-roti-naan-cheese.jpg" },
+        { name: "Salim Pizza Base 10\"", spec: "260g x 2 pcs x 12 pkt", pkt: "-", box: "-", img: "salim-pizza-base-10.jpg" },
+        { name: "Salim Curry Puff Daging 300g", spec: "30g x 10 pcs x 30 pkt", pkt: "3.60", box: "108.00", img: "salim-curry-puff-daging.png" },
+        { name: "Salim Curry Puff Kentang 300g", spec: "30g x 10 pcs x 30 pkt", pkt: "3.50", box: "105.00", img: "salim-curry-puff-kentang.jpg" },
+        { name: "Salim Curry Puff Ayam 300g", spec: "30g x 10 pcs x 30 pkt", pkt: "3.60", box: "108.00", img: "salim-curry-puff-ayam.png" },
+      ]
+};
+
+    let activeCategory = "Burgers";
+
+    function renderTabs() {
+      const container = document.getElementById('category-tabs');
+      container.innerHTML = '';
+      Object.keys(catalogData).forEach(cat => {
+        const btn = document.createElement('button');
+        btn.className = `cat-tab ${cat === activeCategory ? 'active' : ''}`;
+        btn.innerText = cat;
+        btn.onclick = () => selectCategory(cat);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectCategory(cat) {
+      activeCategory = cat;
+      renderTabs();
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = '';
+      const items = catalogData[activeCategory] || [];
+
+      items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <div class="img-container">
+            <img 
+              src="${item.img}" 
+              alt="${item.name}" 
+              class="product-img"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            >
+            <div class="img-placeholder-fallback" style="display:none;">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span>Product Image</span>
+            </div>
+          </div>
+          <div class="product-details">
+            <div>
+              <div class="product-name" title="${item.name}">${item.name}</div>
+              <div class="product-spec">${item.spec}</div>
+            </div>
+            <div class="price-box">
+              <div class="price-row paket">
+                <span class="price-label">PAKET:</span>
+                <span class="price-value">${item.pkt !== '-' ? 'RM ' + item.pkt : '-'}</span>
+              </div>
+              <div class="price-row kotak">
+                <span class="price-label">KOTAK:</span>
+                <span class="price-value">${item.box !== '-' ? 'RM ' + item.box : '-'}</span>
+              </div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    renderTabs();
+    renderProducts();
+  </script>
+</body>
+</html>
